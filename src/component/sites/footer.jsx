@@ -2,7 +2,7 @@
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-white/10">
+    <footer className="mt-16 border-t border-accent-foreground/10">
       <div className="mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-3">
         <div>
           <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Aurora AI</p>

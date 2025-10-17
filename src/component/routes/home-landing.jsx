@@ -19,7 +19,7 @@ export default function HomeLanding() {
       {/* Hero */}
       <section className="relative grid gap-8 py-16 md:py-24">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs text-brand-foreground">
+          <span className="inline-block rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs text-foreground">
             AI Image Generator
           </span>
           <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight md:text-6xl">
@@ -38,7 +38,7 @@ export default function HomeLanding() {
             </Link>
             <Link
               to="/pricing"
-              className="rounded-lg border border-white/10 px-6 py-3 text-sm text-foreground hover:bg-white/5 transition"
+              className="rounded-lg border border-accent-foreground/10 px-6 py-3 text-sm text-foreground hover:bg-white/5 transition"
             >
               View pricing
             </Link>
@@ -72,7 +72,7 @@ export default function HomeLanding() {
             ["“Fast, clean, and gorgeous results.”", "— Kev, Photographer"],
             ["“My go-to tool for product images.”", "— Dani, Founder"],
           ].map(([q, a]) => (
-            <blockquote key={q} className="rounded-xl border border-white/10 bg-white/5 p-5 text-sm leading-relaxed">
+            <blockquote key={q} className="rounded-xl border border-accent-foreground/10 bg-white/5 p-5 text-sm leading-relaxed">
               <p>{q}</p>
               <footer className="mt-3 text-muted-foreground">{a}</footer>
             </blockquote>
@@ -83,7 +83,7 @@ export default function HomeLanding() {
       {/* FAQ */}
       <section className="pb-20">
         <h2 className="text-center text-2xl font-semibold md:text-3xl">FAQ</h2>
-        <div className="mx-auto mt-6 max-w-3xl divide-y divide-white/10 rounded-xl border border-white/10">
+        <div className="mx-auto mt-6 max-w-3xl divide-y divide-accent-foreground/10 rounded-xl border border-accent-foreground/10">
           {[
             ["How does it work?", "Upload an image, pick a style and settings, then generate HD results in seconds."],
             ["Do you store my images?", "You control your content. You can delete generated images anytime."],

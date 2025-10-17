@@ -45,6 +45,13 @@
   --accent-pink: oklch(0.7 0.22 330);
   /* Pink accent */
   --accent-pink-foreground: oklch(0.98 0 0);
+   --payment-bg: #ffffff;
+  --payment-text: #1a1a1a;
+  --payment-border: #e5e7eb;
+  --payment-primary: #2563eb;
+  --payment-primary-hover: #1d4ed8;
+  --payment-primary-text: #ffffff;
+  --payment-success: #16a34a;
 }
 
 .dark {
@@ -80,6 +87,13 @@
   --sidebar-accent-foreground: var(--accent-pink-foreground);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+   --payment-bg: #1e1e1e;
+  --payment-text: #f9f9f9;
+  --payment-border: #2d2d2d;
+  --payment-primary: #3b82f6;
+  --payment-primary-hover: #60a5fa;
+  --payment-primary-text: #ffffff;
+  --payment-success: #22c55e;
 }
 
 @theme inline {
