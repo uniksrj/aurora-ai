@@ -25,13 +25,13 @@ export default function Footer() {
             Instagram
           </a>
           <br />
-          <a
+          {/* <a
             href="https://github.com"
             className="text-muted-foreground hover:text-primary transition"
             aria-label="GitHub"
           >
             GitHub
-          </a>
+          </a> */}
         </div>
         <div className="text-sm space-y-2">
           <a href="/terms" className="text-muted-foreground hover:text-primary transition">

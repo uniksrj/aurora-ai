@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link } from "react-router";
+import { toast, ToastContainer } from "react-toastify";
 const plans = [
   {
     name: "Starter",
@@ -65,48 +65,57 @@ export default function Pricing() {
     const productinfo = selectedPlan.productinfo;
     const firstname = userData.name;
     const email = userData.email;
+    try {
+      const response = await fetch("/api/api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ txnid, amount, productinfo, firstname, email }),
+      });
 
-    const response = await fetch("/api/generateHash", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ txnid, amount, productinfo, firstname, email }),
-    });
+      const data = await response.json();
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+      toast.success("Purchased successfully", {
+        position: "top-right",
+      });
+      // Auto-create payment form
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = PAYU_BASE_URL;
 
-    const data = await response.json();
-    if (data.error) {
-      alert("Error: " + data.error);
-      return;
+      const fields = {
+        key: data.key,
+        txnid: data.txnid,
+        amount: data.amount,
+        productinfo: data.productinfo,
+        firstname: data.firstname,
+        email: data.email,
+        phone: "9999999999",
+        surl: "https://yourdomain.com/payment/success",
+        furl: "https://yourdomain.com/payment/failure",
+        hash: data.hash,
+        service_provider: "payu_paisa",
+      };
+
+      for (const name in fields) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = fields[name];
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed purchased Server error", {
+        position: "top-right",
+      });
     }
 
-    // Auto-create payment form
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = PAYU_BASE_URL;
-
-    const fields = {
-      key: data.key,
-      txnid: data.txnid,
-      amount: data.amount,
-      productinfo: data.productinfo,
-      firstname: data.firstname,
-      email: data.email,
-      phone: "9999999999",
-      surl: "https://yourdomain.com/payment/success",
-      furl: "https://yourdomain.com/payment/failure",
-      hash: data.hash,
-      service_provider: "payu_paisa",
-    };
-
-    for (const name in fields) {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = fields[name];
-      form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
   };
 
   return (
@@ -115,7 +124,13 @@ export default function Pricing() {
       <p className="mt-2 text-center text-sm text-muted-foreground">
         Flexible options for creators and teams.
       </p>
-
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+      />
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         {plans.map((p) => (
           <div
@@ -184,18 +199,22 @@ export default function Pricing() {
               <input
                 type="text"
                 placeholder="Name"
+                value={userData.name}
+                onChange={(e) => setUserData({ ...userData, name: e.target.value })}
                 className="w-full border border-[var(--payment-border)] p-2 rounded-md bg-transparent"
               />
               <input
                 type="email"
                 placeholder="Email"
+                value={userData.email}
+                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                 className="w-full border border-[var(--payment-border)] p-2 rounded-md bg-transparent"
               />
               <input
                 type="number"
                 placeholder="Amount"
                 disabled
-                value={selectedPlan.amount} // use actual plan amount
+                value={selectedPlan.amount}
                 className="w-full border border-[var(--payment-border)] p-2 rounded-md bg-gray-100 dark:bg-gray-800"
               />
             </div>
@@ -203,6 +222,7 @@ export default function Pricing() {
             {/* Pay Button */}
             <button
               className="mt-5 w-full bg-[var(--payment-primary)] text-[var(--payment-primary-text)] py-2 rounded-md font-medium hover:bg-[var(--payment-primary-hover)] transition"
+              onClick={handlePayment}
             >
               Pay Now
             </button>
