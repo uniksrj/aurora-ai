@@ -9,24 +9,31 @@ import Pricing from './component/routes/pricing'
 import About from './component/routes/about'
 import Contact from './component/routes/contect'
 import ThemeToggle from './component/themetoggle'
+import Login from './component/auth/Login'
+import Signup from './component/auth/Signup'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
-    <main className="min-h-dvh bg-card text-foreground">
-      <BrowserRouter>
-        <Navbar />
-        <div className="pt-20">
-          <Routes>
-            <Route path="/" element={<HomeLanding />} />
-            <Route path="/generate" element={<Generate />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </div>
-        <Footer />
-      </BrowserRouter>
-    </main>
+    <AuthProvider>
+      <main className="min-h-dvh bg-card text-foreground">
+        <BrowserRouter>
+          <Navbar />
+          <div className="pt-20">
+            <Routes>
+              <Route path="/" element={<HomeLanding />} />
+              <Route path="/generate" element={<Generate />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />              
+            </Routes>
+          </div>
+          <Footer />
+        </BrowserRouter>
+      </main>
+    </AuthProvider>
   )
 }
 

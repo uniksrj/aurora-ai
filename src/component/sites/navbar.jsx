@@ -62,6 +62,24 @@ export default function Navbar() {
                                     Try it now
                                 </Link>
                             </li>
+                             <li>
+                                <Link
+                                    to="/login"
+                                    onClick={() => setOpen(false)}
+                                    className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                                >
+                                   Login
+                                </Link>
+                            </li>
+                             <li>
+                                <Link
+                                    to="/signup"
+                                    onClick={() => setOpen(false)}
+                                    className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                                >
+                                  SignUp
+                                </Link>
+                            </li>
                              <li className="flex justify-center">
                                 <ThemeToggle />
                             </li>
@@ -91,6 +109,24 @@ export default function Navbar() {
                                     className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                                 >
                                     Try it now
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/generate"
+                                    onClick={() => setOpen(false)}
+                                    className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                                >
+                                   Login
+                                </Link>
+                            </li>
+                             <li>
+                                <Link
+                                    to="/generate"
+                                    onClick={() => setOpen(false)}
+                                    className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                                >
+                                  SignUp
                                 </Link>
                             </li>
                             <li className="flex justify-center">
