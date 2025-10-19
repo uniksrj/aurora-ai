@@ -113,7 +113,7 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    to="/generate"
+                                    to="/login"
                                     onClick={() => setOpen(false)}
                                     className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                                 >
@@ -122,7 +122,7 @@ export default function Navbar() {
                             </li>
                              <li>
                                 <Link
-                                    to="/generate"
+                                    to="/signup"
                                     onClick={() => setOpen(false)}
                                     className="block text-center rounded-lg bg-brand text-brand-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                                 >
