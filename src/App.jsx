@@ -13,6 +13,7 @@ import Login from './component/auth/Login'
 import Signup from './component/auth/Signup'
 import { AuthProvider } from './context/AuthContext'
 import PaymentSuccess from './component/PaymentSuccess'
+import ForgotPassword from './component/auth/ForgotPassword'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/payment/success" element={<PaymentSuccess />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               {/* <Route path="/payment/failure" element={<PaymentFailure />} /> */}
             </Routes>
           </div>

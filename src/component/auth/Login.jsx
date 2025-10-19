@@ -19,7 +19,7 @@ export default function Login() {
             const resultNative = await login(email, password);       
             console.log("this is user data :", resultNative);
                  
-            // navigate('/');
+            navigate('/');
         } catch (error) {
             setError('Failed to sign in: ' + error.message);
         }
@@ -31,7 +31,7 @@ export default function Login() {
             setError('');
             setLoading(true);
             await signInWithGoogle();
-            // navigate('/');
+            navigate('/');
         } catch (error) {
             setError('Failed to sign in with Google: ' + error.message);
         }
