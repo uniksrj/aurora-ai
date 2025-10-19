@@ -4,7 +4,9 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
-import { PLAN_TYPES, getUserDocument ,addPurchase, updateUserCredits, getUserCredits } from "../../service/userService";
+import { PLAN_TYPES, getUserDocument, addPurchase, updateUserCredits, getUserCredits } from "../../service/userService";
+import '../../css/custome.css';
+import LoginPrompt from '../../component/LoginPrompt';
 
 const plans = [
   {
@@ -48,6 +50,7 @@ export default function Pricing() {
   const [showModal, setShowModal] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [userCredits, setUserCredits] = useState(0);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -55,12 +58,11 @@ export default function Pricing() {
 
   useEffect(() => {
     if (currentUser) {
-      setUserData({ 
-        name: currentUser.displayName || "", 
-        email: currentUser.email || "" 
+      setUserData({
+        name: currentUser.displayName || "",
+        email: currentUser.email || ""
       });
       setDisabled(true);
-      // Load user credits
       loadUserCredits();
     } else {
       setDisabled(false);
@@ -81,11 +83,8 @@ export default function Pricing() {
 
   const openModal = (plan) => {
     if (!currentUser) {
-      toast.info("Please login first to purchase credits", {
-        position: "top-right",
-      });
-      navigate('/login');
-      return;
+     setShowLoginPrompt(true);
+    return;
     }
     setSelectedPlan(plan);
     setShowModal(true);
@@ -104,20 +103,20 @@ export default function Pricing() {
         planType: selectedPlan.planType,
         planName: selectedPlan.name,
         amount: parseInt(selectedPlan.amount),
-        credits: selectedPlan.planType === PLAN_TYPES.STUDIO ? 
+        credits: selectedPlan.planType === PLAN_TYPES.STUDIO ?
           'unlimited' : selectedPlan.credits,
         transactionId: transactionId
       };
 
       await addPurchase(currentUser.uid, purchaseData);
-      
+
       toast.success(`Successfully purchased ${selectedPlan.name} plan!`, {
         position: "top-right",
       });
-      
+
       // Reload credits
       await loadUserCredits();
-      
+
     } catch (error) {
       console.error("Error saving purchase:", error);
       toast.error("Error saving purchase details", {
@@ -219,16 +218,15 @@ export default function Pricing() {
       <p className="mt-2 text-center text-sm text-muted-foreground">
         Flexible options for creators and teams.
       </p>
-      
-      <ToastContainer position="top-right" autoClose={5000} />
+
+      {showLoginPrompt && <LoginPrompt />}
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`rounded-xl border border-accent-foreground/10 p-6 ${
-              plan.popular ? "bg-white/5 ring-1 ring-brand/40" : "bg-transparent"
-            }`}
+            className={`rounded-xl border border-accent-foreground/10 p-6 ${plan.popular ? "bg-white/5 ring-1 ring-brand/40" : "bg-transparent"
+              }`}
           >
             <div className="flex items-baseline justify-between">
               <h3 className="text-lg font-medium">{plan.name}</h3>
@@ -295,8 +293,8 @@ export default function Pricing() {
                 </p>
                 <p className="text-sm mt-1">
                   After purchase: <strong>
-                    {selectedPlan.credits === 'unlimited' ? 
-                      'Unlimited' : 
+                    {selectedPlan.credits === 'unlimited' ?
+                      'Unlimited' :
                       (userCredits + selectedPlan.credits).toLocaleString()
                     }
                   </strong>

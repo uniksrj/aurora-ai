@@ -115,12 +115,7 @@ export default function Navbar() {
                                                     <p className="font-medium">{user.displayName || 'User'}</p>
                                                     <p className="text-muted-foreground text-xs">{user.email}</p>
                                                 </div>
-                                                <Link
-                                                    to="/dashboard"
-                                                    className="block px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors rounded-lg"
-                                                >
-                                                    Dashboard
-                                                </Link>
+                                                
                                                 <button
                                                     onClick={handleLogout}
                                                     className="block w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors rounded-lg"
@@ -215,13 +210,6 @@ export default function Navbar() {
                                                 <p className="text-muted-foreground text-xs">{user.email}</p>
                                             </div>
                                         </div>
-                                        <Link
-                                            to="/dashboard"
-                                            onClick={() => setOpen(false)}
-                                            className="block rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-2"
-                                        >
-                                            Dashboard
-                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="block w-full text-left rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
