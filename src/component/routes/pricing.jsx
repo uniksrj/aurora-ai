@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Link } from "react-router";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
 const plans = [
   {
     name: "Starter",
@@ -40,8 +41,23 @@ export default function Pricing() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [userData, setUserData] = useState({ name: "", email: "" });
   const [showModal, setShowModal] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const { currentUser } = useAuth();
+  const navigate = useNavigate()
 
   const PAYU_BASE_URL = "https://test.payu.in/_payment"; // ✅ sandbox, switch to secure.payu.in for live
+
+  useEffect(() => {
+    if (currentUser) {
+      setUserData({ name: currentUser.displayName, email: currentUser.email })
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [currentUser])
+
+  console.log("user login data :", currentUser);
+
 
   const openModal = (plan) => {
     setSelectedPlan(plan);
@@ -58,6 +74,11 @@ export default function Pricing() {
     if (!userData.name || !userData.email) {
       alert("Please fill in name and email.");
       return;
+    }
+
+    if (!currentUser) {
+      alert("first you need to login !");
+      navigate('/login');
     }
 
     const txnid = "txn_" + Date.now();
@@ -200,6 +221,7 @@ export default function Pricing() {
                 type="text"
                 placeholder="Name"
                 value={userData.name}
+                disabled={disabled}
                 onChange={(e) => setUserData({ ...userData, name: e.target.value })}
                 className="w-full border border-[var(--payment-border)] p-2 rounded-md bg-transparent"
               />
@@ -207,6 +229,7 @@ export default function Pricing() {
                 type="email"
                 placeholder="Email"
                 value={userData.email}
+                disabled={disabled}
                 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                 className="w-full border border-[var(--payment-border)] p-2 rounded-md bg-transparent"
               />

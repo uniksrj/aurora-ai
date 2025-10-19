@@ -64,8 +64,9 @@ export function AuthProvider({ children }) {
     saveUserToLocalStorage(resultNative.data)
   };
 
-  const logout = () => {
-    return signOut(auth);
+  const logout = async () => {
+    localStorage.removeItem('currentUser');
+    await signOut(auth);
   };
 
   const resetPassword = (email) => {
