@@ -12,6 +12,7 @@ import ThemeToggle from './component/themetoggle'
 import Login from './component/auth/Login'
 import Signup from './component/auth/Signup'
 import { AuthProvider } from './context/AuthContext'
+import PaymentSuccess from './component/PaymentSuccess'
 
 function App() {
   return (
@@ -27,7 +28,9 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />              
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/payment/success" element={<PaymentSuccess />} />
+              {/* <Route path="/payment/failure" element={<PaymentFailure />} /> */}
             </Routes>
           </div>
           <Footer />
