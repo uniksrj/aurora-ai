@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import { editImageWithAI, generateImages } from "../../lib/api"
 import { toast, ToastContainer } from "react-toastify";
 import { fileToBase64 } from "../../utils/utils";
+import { useAuth } from "../../context/AuthContext";
+import { saveGeneratedImage } from "../../service/imageService";
 
 const defaultSettings = {
   resolution: "1024",
@@ -32,7 +34,7 @@ export default function Generate() {
 
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
-
+  const { currentUser } = useAuth();
   // 🖼️ Handle preview URL when file changes
   useEffect(() => {
     if (!file) {
@@ -109,7 +111,7 @@ export default function Generate() {
 
     if (useAIPrompt) {
       try {
-        await onGenerateViaApi(); 
+        await onGenerateViaApi();
       } catch (err) {
         console.error(err);
       }
@@ -148,10 +150,21 @@ export default function Generate() {
     e?.preventDefault?.();
     setApiError("");
     setApiLoading(true);
+
+    // Check if user is logged in
+    if (!currentUser) {
+      toast.error("Please login to generate images", {
+        position: "top-right",
+      });
+      setApiLoading(false);
+      return;
+    }
+
     let $file = null;
-    if(file){
+    if (file) {
       $file = fileToBase64(file);
     }
+
     try {
       const images = await editImageWithAI({
         imageFile: $file,
@@ -161,23 +174,47 @@ export default function Generate() {
         output_format: "png",
         negative_prompt: "",
         style_preset: style,
+        userId: currentUser.uid, 
       });
-      console.log("return data :", images);
 
-      // images is now an array of base64 strings
-      setResults(images.map((img, index) => ({
-        id: index,
-        cdnUrl: img,
-        prompt,
-        style,
-        width: size,
-        height: size,
-      })));
+      console.log("Generated images data:", images);
 
-      toast.success("Image generated successfully", {
+      // Save each image to database and create result objects
+      const savedResults = [];
+
+      for (const imageData of images) {
+        // Save to database
+        const savedImage = await saveGeneratedImage(currentUser.uid, {
+          imageUrl: imageData.imageUrl || imageData.cdnUrl || imageData,
+          prompt: prompt,
+          stylePreset: style,
+          aspectRatio: "1:1",
+          negativePrompt: "",
+          strength: $file ? 0.2 : null,
+          isEdit: !!$file,
+          width: size,
+          height: size,
+        });
+
+        savedResults.push({
+          id: savedImage.id,
+          cdnUrl: savedImage.imageUrl,
+          prompt: savedImage.prompt,
+          style: savedImage.stylePreset,
+          width: savedImage.width,
+          height: savedImage.height,
+          createdAt: savedImage.createdAt,
+        });
+      }
+
+      setResults(savedResults);
+
+      toast.success(`Successfully generated and saved ${savedResults.length} image(s)!`, {
         position: "top-right",
       });
+
     } catch (err) {
+      console.error("Generation error:", err);
       setApiError(err.message || "Something went wrong");
       toast.error("Image generation failed", {
         position: "top-right",

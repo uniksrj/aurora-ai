@@ -17,6 +17,7 @@ import ForgotPassword from './component/auth/ForgotPassword'
 import { AdminImage } from './component/admin/AdminImage'
 import AdminRoute from './component/admin/AdminRoute'
 import Unauthorized from './component/pages/Unauthorized'
+import Nologin from './component/NoLogin/Nologin'
 
 function App() {
   return (
@@ -27,7 +28,15 @@ function App() {
           <div className="pt-20">
             <Routes>
               <Route path="/" element={<HomeLanding />} />
-              <Route path="/generate" element={<Generate />} />
+              <Route
+                path="/generate"
+                element={
+                  <Nologin>
+                    <Generate />
+                  </Nologin>
+                }
+              />
+              {/* <Route path="/generate" element={<Generate />} /> */}
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

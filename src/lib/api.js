@@ -1,5 +1,3 @@
-import { saveGeneratedImage } from '../service/imageService'
-import { updateUserCredits } from '../service/userService'
 
 export async function generateImages({ prompt, style = "default", count = 4, size = 1024 }) {
   const res = await fetch("/api/generate", {
@@ -65,12 +63,9 @@ export async function editImageWithAI({
   negative_prompt = "",
   style_preset = "",
   count = 1,
-   userId = null,
+  userId = null,
 }) {
 
- if (!userId) {
-    throw new Error("User ID is required to save generated images");
-  }
   const apiKey = import.meta.env.VITE_STABILITY_API_KEY;
   const apiUrl = "https://api.stability.ai/v2beta/stable-image/generate/core";
 
@@ -87,6 +82,7 @@ export async function editImageWithAI({
     formData.append("image", imageFile);
     formData.append("strength", strength);
   }
+
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
@@ -107,46 +103,30 @@ export async function editImageWithAI({
   if (Array.isArray(data.images)) {
     // Loop through all images returned
     for (const img of data.images) {
-      // img.base64 is the actual base64 string
       const imageUrl = await uploadToCloudinary(img.base64);
-      const savedImage = await saveGeneratedImage(userId, {
+      images.push({
         imageUrl,
         prompt,
         stylePreset: style_preset,
         aspectRatio: aspect_ratio,
-        negativePrompt: negative_prompt,
-        strength: imageFile ? strength : null,
-        isEdit: !!imageFile,
       });
-      images.push(savedImage);
     }
   } else if (data.image) {
     // Single image returned
     const imageUrl = await uploadToCloudinary(data.image);
-    const savedImage = await saveGeneratedImage(userId, {
+    images.push({
       imageUrl,
       prompt,
       stylePreset: style_preset,
       aspectRatio: aspect_ratio,
-      negativePrompt: negative_prompt,
-      strength: imageFile ? strength : null,
-      isEdit: !!imageFile,
     });
-    images.push(savedImage);
   } else if (data.image_url) {
-    const savedImage = await saveGeneratedImage(userId, {
+    images.push({
       imageUrl: data.image_url,
       prompt,
       stylePreset: style_preset,
       aspectRatio: aspect_ratio,
-      negativePrompt: negative_prompt,
-      strength: imageFile ? strength : null,
-      isEdit: !!imageFile,
     });
-    images.push(savedImage);
-  }
-  if (images.length > 0) {
-    await updateUserCredits(userId, images.length);
   }
 
   return images;

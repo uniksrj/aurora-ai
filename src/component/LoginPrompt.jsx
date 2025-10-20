@@ -64,9 +64,9 @@ export default function LoginPrompt() {
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                             Login Required
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 text-lg">
+                        {/* <p className="text-gray-600 dark:text-gray-300 text-lg">
                             Please login to purchase credits
-                        </p>
+                        </p> */}
                     </div>
 
                     {/* Animated Progress Bar - FIXED */}
