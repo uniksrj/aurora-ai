@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase/config';
+import { auth, db, doc, getDoc, serverTimestamp, setDoc } from '../firebase/config';
 
 
 const AuthContext = createContext();
@@ -73,15 +73,50 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   };
 
+  // Add this function to save user to Firestore
+const saveUserToFirestore = async (user) => {
+  try {
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+    
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      lastLoginAt: serverTimestamp(),
+      provider: 'google.com',
+    };
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        ...userData,
+        role: 'user', 
+        createdAt: serverTimestamp(),
+        plan: 'free',
+        totalGenerations: 0,
+      });
+      console.log('New user saved to Firestore:', user.email);
+    } else {
+      await setDoc(userRef, userData, { merge: true });
+      console.log('User login updated in Firestore:', user.email);
+    }
+  } catch (error) {
+    console.error('Error saving user to Firestore:', error);
+  }
+};
+
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const resultGoogle = await signInWithPopup(auth, provider);
-    saveUserToLocalStorage(resultGoogle.user);
+    const user = resultGoogle.user
+    saveUserToLocalStorage(user);
     console.log('Google user saved to localStorage:', {
       name: resultGoogle.user.displayName,
       email: resultGoogle.user.email,
       photo: resultGoogle.user.photoURL
     });
+    await saveUserToFirestore(user);
     return resultGoogle;
   };
 

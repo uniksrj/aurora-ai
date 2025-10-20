@@ -134,10 +134,7 @@ export default function Pricing() {
     }
 
     if (!currentUser) {
-      toast.error("Please login first!", {
-        position: "top-right",
-      });
-      navigate('/login');
+      setShowLoginPrompt(true);
       return;
     }
 
@@ -148,7 +145,7 @@ export default function Pricing() {
     const email = userData.email;
 
     try {
-      const response = await fetch("/api/api", {
+      const response = await fetch("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ txnid, amount, productinfo, firstname, email }),
@@ -161,7 +158,7 @@ export default function Pricing() {
         });
         return;
       }
-
+      await handlePaymentSuccess(data.txnid);
       // Auto-create payment form
       const form = document.createElement("form");
       form.method = "POST";

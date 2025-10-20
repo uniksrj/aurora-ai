@@ -10,6 +10,12 @@ export default defineConfig({
       // This helps with the Cross-Origin-Opener-Policy issue
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Cross-Origin-Embedder-Policy': 'unsafe-none'
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      }
     }
   }
 })

@@ -14,6 +14,9 @@ import Signup from './component/auth/Signup'
 import { AuthProvider } from './context/AuthContext'
 import PaymentSuccess from './component/PaymentSuccess'
 import ForgotPassword from './component/auth/ForgotPassword'
+import { AdminImage } from './component/admin/AdminImage'
+import AdminRoute from './component/admin/AdminRoute'
+import Unauthorized from './component/pages/Unauthorized'
 
 function App() {
   return (
@@ -32,7 +35,15 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/payment/success" element={<PaymentSuccess />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              {/* <Route path="/payment/failure" element={<PaymentFailure />} /> */}
+              <Route
+                path="/adminImagePage"
+                element={
+                  <AdminRoute>
+                    <AdminImage />
+                  </AdminRoute>
+                }
+              />
+              <Route path="/unauthorized" element={< Unauthorized />} />
             </Routes>
           </div>
           <Footer />

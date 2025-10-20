@@ -137,5 +137,85 @@ async function uploadToCloudinary(base64) {
   });
 
   const data = await res.json();
-  return data.secure_url; // ✅ 
+
+  // Store image metadata in Firestore (central collection)
+  await storeImageMetadata({
+    publicId: data.public_id,
+    url: data.secure_url,
+    userId: user.uid,
+    userEmail: user.email,
+    prompt: "user's prompt here", // pass this from your UI
+    createdAt: new Date().toISOString()
+  });
+
+  return {
+    secure_url: data.secure_url,
+    public_id: data.public_id
+  };
 }
+
+// Store image metadata in central collection
+async function storeImageMetadata(imageData) {
+  const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+  const { db } = await import('../firebase/config');
+  
+  try {
+    await addDoc(collection(db, 'images'), {
+      ...imageData,
+      createdAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error storing image metadata:', error);
+  }
+}
+
+export async function getAllImages(user) {
+  const token = await user.getIdToken();
+  
+  const response = await fetch('/api/admin/images', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch images');
+  }
+
+  return await response.json();
+}
+
+// Delete multiple images (admin only)
+export async function adminDeleteImages(publicIds, user) {
+  const token = await user.getIdToken();
+  
+  const response = await fetch('/api/admin/delete-all', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ publicIds })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete images');
+  }
+
+  return await response.json();
+}
+
+
+// const firebaseAdminConfig = {
+//   credential: cert({
+//     projectId: process.env.FIREBASE_PROJECT_ID,
+//     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+//     privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+//   }),
+// };
+
+// export function initAdmin() {
+//   if (getApps().length === 0) {
+//     initializeApp(firebaseAdminConfig);
+//   }
+// }
