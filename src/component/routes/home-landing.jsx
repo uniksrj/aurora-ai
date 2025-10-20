@@ -2,10 +2,11 @@
 
 import { Link } from "react-router"
 
-function DemoImage({ alt, h = 320, w = 480, query }) {
+function DemoImage({ alt, h = 320, w = 480, query ,src =""}) {
+  let $src = !src ? 'generic-placeholder-icon.png' :  src;
   return (
     <img
-      src={`/generic-placeholder-icon.png?height=${h}&width=${w}&query=${encodeURIComponent(query)}`}
+      src={`/${$src}?height=${h}&width=${w}&query=${encodeURIComponent(query)}`}
       alt={alt}
       className="h-full w-full rounded-xl object-cover ring-1 ring-white/10 transition-transform duration-500 hover:scale-[1.02]"
       loading="lazy"
@@ -53,8 +54,8 @@ export default function HomeLanding() {
             style={{ background: "radial-gradient(1200px 400px at 50% -10%, var(--brand-glow), transparent)" }}
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <DemoImage alt="Pro headshot result" query="professional studio headshot, premium lighting, HD result" />
-            <DemoImage alt="Anime style result" query="anime portrait vibrant, neon cyberpunk" />
+            <DemoImage alt="Pro headshot result" query="professional studio headshot, premium lighting, HD result" src="maharaj.webp" />
+            <DemoImage alt="Anime style result" query="anime portrait vibrant, neon cyberpunk" src="diwali.webp" />
             <DemoImage alt="Fantasy style result" query="fantasy portrait with magical particles, cinematic lighting" />
             <DemoImage alt="Cartoon style result" query="clean cartoon vector portrait, bold lines" />
             <DemoImage alt="Background removal" query="subject with transparent background, product photo style" />

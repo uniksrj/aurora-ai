@@ -1,3 +1,6 @@
+import { saveGeneratedImage } from '../service/imageService'
+import { updateUserCredits } from '../service/userService'
+
 export async function generateImages({ prompt, style = "default", count = 4, size = 1024 }) {
   const res = await fetch("/api/generate", {
     method: "POST",
@@ -62,9 +65,12 @@ export async function editImageWithAI({
   negative_prompt = "",
   style_preset = "",
   count = 1,
+   userId = null,
 }) {
 
-
+ if (!userId) {
+    throw new Error("User ID is required to save generated images");
+  }
   const apiKey = import.meta.env.VITE_STABILITY_API_KEY;
   const apiUrl = "https://api.stability.ai/v2beta/stable-image/generate/core";
 
@@ -103,14 +109,44 @@ export async function editImageWithAI({
     for (const img of data.images) {
       // img.base64 is the actual base64 string
       const imageUrl = await uploadToCloudinary(img.base64);
-      images.push(imageUrl);
+      const savedImage = await saveGeneratedImage(userId, {
+        imageUrl,
+        prompt,
+        stylePreset: style_preset,
+        aspectRatio: aspect_ratio,
+        negativePrompt: negative_prompt,
+        strength: imageFile ? strength : null,
+        isEdit: !!imageFile,
+      });
+      images.push(savedImage);
     }
   } else if (data.image) {
     // Single image returned
     const imageUrl = await uploadToCloudinary(data.image);
-    images.push(imageUrl);
+    const savedImage = await saveGeneratedImage(userId, {
+      imageUrl,
+      prompt,
+      stylePreset: style_preset,
+      aspectRatio: aspect_ratio,
+      negativePrompt: negative_prompt,
+      strength: imageFile ? strength : null,
+      isEdit: !!imageFile,
+    });
+    images.push(savedImage);
   } else if (data.image_url) {
-    images.push(data.image_url);
+    const savedImage = await saveGeneratedImage(userId, {
+      imageUrl: data.image_url,
+      prompt,
+      stylePreset: style_preset,
+      aspectRatio: aspect_ratio,
+      negativePrompt: negative_prompt,
+      strength: imageFile ? strength : null,
+      isEdit: !!imageFile,
+    });
+    images.push(savedImage);
+  }
+  if (images.length > 0) {
+    await updateUserCredits(userId, images.length);
   }
 
   return images;
@@ -158,7 +194,7 @@ async function uploadToCloudinary(base64) {
 async function storeImageMetadata(imageData) {
   const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
   const { db } = await import('../firebase/config');
-  
+
   try {
     await addDoc(collection(db, 'images'), {
       ...imageData,
@@ -171,7 +207,7 @@ async function storeImageMetadata(imageData) {
 
 export async function getAllImages(user) {
   const token = await user.getIdToken();
-  
+
   const response = await fetch('/api/admin/images', {
     headers: {
       'Authorization': `Bearer ${token}`
@@ -188,7 +224,7 @@ export async function getAllImages(user) {
 // Delete multiple images (admin only)
 export async function adminDeleteImages(publicIds, user) {
   const token = await user.getIdToken();
-  
+
   const response = await fetch('/api/admin/delete-all', {
     method: 'POST',
     headers: {

@@ -10,11 +10,12 @@ export function AdminImage() {
     const [selectedImages, setSelectedImages] = useState(new Set());
     const [loading, setLoading] = useState(false);
 
-    
+
     useEffect(() => {
         loadAllImages();
     }, [user]);
-
+    console.log("This is user Details :", user);
+    
     const loadAllImages = async () => {
         if (!user) return;
 

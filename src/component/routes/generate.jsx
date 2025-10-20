@@ -104,12 +104,12 @@ export default function Generate() {
   }, [previewUrl, settings]);
 
   async function onGenerate(e) {
-    e?.preventDefault?.(); // in case this comes from a form submit
+    e?.preventDefault?.();
     setProcessing(true);
 
     if (useAIPrompt) {
       try {
-        await onGenerateViaApi(); // wait for API result
+        await onGenerateViaApi(); 
       } catch (err) {
         console.error(err);
       }
