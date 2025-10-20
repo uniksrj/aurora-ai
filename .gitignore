@@ -25,5 +25,6 @@ dev-server.js
 *.njsproj
 *.sln
 *.sw?
+.env
 
 .vercel

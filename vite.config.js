@@ -11,6 +11,18 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Cross-Origin-Embedder-Policy': 'unsafe-none'
     },
+     build: {    
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {        
+        manualChunks: {          
+          vendor: ['react', 'react-dom'],          
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],          
+          ui: ['react-toastify']
+        }
+      }
+    }
+  },
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
